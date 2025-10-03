@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./sections/Navbar";
-import Hero from "./sections/Hero";
-import ServiceSummary from "./sections/ServiceSummary";
 import Services from "./sections/Services";
 import ReactLenis from "lenis/react";
 import About from "./sections/About";
 import Works from "./sections/Works";
-import ContactSummary from "./sections/ContactSummary";
 import Contact from "./sections/Contact";
-import { useProgress } from "@react-three/drei";
 
 const App = () => {
-  const { progress } = useProgress();
+  const [progress, setProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (progress === 100) {
-      setIsReady(true);
-    }
-  }, [progress]);
+    // Fake loading progress
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsReady(true);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <ReactLenis root className="relative w-screen min-h-screen overflow-x-auto">
+    <ReactLenis root className="relative max-w-[1440px] mx-auto min-h-screen overflow-x-auto">
       {!isReady && (
         <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light">
           <p className="mb-4 text-xl tracking-widest animate-pulse">
@@ -41,12 +47,9 @@ const App = () => {
         } transition-opacity duration-1000`}
       >
         <Navbar />
-        <Hero />
-        <ServiceSummary />
         <Services />
         <About />
         <Works />
-        <ContactSummary />
         <Contact />
       </div>
     </ReactLenis>
